@@ -65,3 +65,6 @@ Start the guide...
 - Abstract CSS (currently based on Bootstrap)
 - Remove jQuery dependency
 - Add keypress support
+
+ [0]: https://github.com/Dozyatom/guide.js/blob/master/guide.js
+ [1]: https://github.com/Dozyatom/guide.js/blob/master/guide.css
