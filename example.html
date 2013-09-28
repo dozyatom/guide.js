@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="guide.js"></script>
+<link href="guide.css" rel="stylesheet">
+</head>
+<body>
+	<div id="hello" style="position:absolute;top:100px;left:200px;">Hello</div>
+	<div id="world" style="position:absolute;top:200px;left:300px;">World</div>
+<script>
+
+$(function() {
+    
+    var guide = $("body").guide();
+
+    guide.addStep("#hello", "This step says hello");
+    guide.addStep("#world", "This step says world");
+    
+    guide.start();
+   
+});
+</script>
+</body>
+</html>
