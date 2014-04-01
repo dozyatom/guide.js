@@ -4,7 +4,8 @@
     width: 100%;
     left: 0px;
     top: 0px;
-    opacity: 0;
+    display:none;
+    opacity:0.5;
 }
 .guideBubble {
     position: absolute;
@@ -36,14 +37,14 @@
     content:'';
     position: absolute;
 }
-.guideBubble-arrow.top {
+.guideBubble-arrow.bottom {
     top: -10px;
     border-top-color:transparent;
     border-right-color:transparent;
     border-bottom-color:white;
     border-left-color:transparent;
 }
-.guideBubble-arrow.right {
+.guideBubble-arrow.left {
     right: -10px;
     top: 10px;
     border-top-color:transparent;
@@ -51,18 +52,21 @@
     border-bottom-color:transparent;
     border-left-color:white;
 }
-.guideBubble-arrow.bottom {
+.guideBubble-arrow.top {
     bottom: -10px;
     border-top-color:white;
     border-right-color:transparent;
     border-bottom-color:transparent;
     border-left-color:transparent;
 }
-.guideBubble-arrow.left {
+.guideBubble-arrow.right {
     left: -10px;
     top: 10px;
     border-top-color:transparent;
     border-right-color:white;
     border-bottom-color:transparent;
     border-left-color:transparent;
+}
+.guideBubble .btn-danger {
+    background-image: none;
 }

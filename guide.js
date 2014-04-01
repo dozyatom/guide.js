@@ -1,9 +1,10 @@
 (function ( $ ) {
 
     overlay = function() {
-     this.construct = function(element) {
+     this.construct = function() {
         this.guide = null;
         this.classes = [];
+        this.blurbs = [];
         this.queued = [];
         this.nonqueued = [];
         this.blurb = '';
@@ -13,11 +14,12 @@
         this.construct();
         var help = this;
         this.guide = element.guide();
-        $.each(element.find('[data-blurb]'), function() {
-            if ($.inArray($(this).attr('class'), help.classes) === -1) {
+        $.each(element.find('[data-g-blurb]'), function() {
+            if ($.inArray($(this).attr('class'), help.classes) === -1 || $.inArray($(this).attr('data-g-blurb'), help.blurbs) === -1) {
                 help.classes.push($(this).attr('class'));
-                if ($(this).attr('data-order')) {
-                    var index = parseInt($(this).attr('data-order'));
+                help.blurbs.push($(this).attr('data-g-blurb'));
+                if ($(this).attr('data-g-order')) {
+                    var index = parseInt($(this).attr('data-g-order'));
                     if (help.queued[index] != null) {
                         help.queued.splice(index+1,0, $(this));
                     }
@@ -32,16 +34,16 @@
         });
         $.each(help.queued, function(i, e) {
             if (e) {
-                help.blurb = $(this).attr('data-blurb');
+                help.blurb = $(this).attr('data-g-blurb');
                 $(this).addClass('blurbnum-'+help.count);
-                help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-direction') || 'bottom', margin: $(this).attr('data-margin') || 10 });
+                help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-g-direction') || 'bottom', margin: $(this).attr('data-g-margin') || 10 });
                 help.count++;
             }
         });
         $.each(help.nonqueued, function() {
-            help.blurb = $(this).attr('data-blurb');
+            help.blurb = $(this).attr('data-g-blurb');
             $(this).addClass('blurbnum-'+help.count);
-            help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-direction') || 'bottom', margin: $(this).attr('data-margin') || 10 });
+            help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-g-direction') || 'bottom', margin: $(this).attr('data-g-margin') || 10 });
             help.count++;
         });
     };

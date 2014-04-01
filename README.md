@@ -45,18 +45,18 @@ setTimeout(function() {
 
 ##### Blurb
 
-In order to add new steps to your overlay, add the `data-blurb` attribute to any element on your page.
+In order to add new steps to your overlay, add the `data-g-blurb` attribute to any element on your page.
 
 ```HTML
-<div class='my-element' data-blurb='This is the text that will show up when this step is reached.'>Hello, World!</div>
+<div class='my-element' data-g-blurb='This is the text that will show up when this step is reached.'>Hello, World!</div>
 ```
 
 ##### Order
 
-Your blurb nodes will, by default, order by their position in your HTML structure. Nodes closer to the initial `<body>` tag will show before nodes closer to your closing `</body>` tag. If you would like to override this ordering, use the `data-order` option.
+Your blurb nodes will, by default, order by their position in your HTML structure. Nodes closer to the initial `<body>` tag will show before nodes closer to your closing `</body>` tag. If you would like to override this ordering, use the `data-g-order` option.
 
 ```HTML
-<div class='my-element' data-order='1'>Hello, World!</div>
+<div class='my-element' data-g-order='1'>Hello, World!</div>
 ```
 
 You can order from 0 to any value you desire.
@@ -65,9 +65,19 @@ By default, ordered elements will show before any un-ordered elements, despite w
 
 ##### Direction
 
-guide.js also allows you to define which side of your element you'd like the bubble to appear on. Use the `data-direction` option.
+guide.js also allows you to define which side of your element you'd like the bubble to appear on. Use the `data-g-direction` option.
 
 ```HTML
-<div class='my-element' data-direction='top'>Hello, World!</div>
+<div class='my-element' data-g-direction='top'>Hello, World!</div>
 ```
-Your options for direction are 'top', 'bottom', 'left', and 'right'.
+Your options for direction are 'top', 'bottom', 'left', and 'right'. The default is 'bottom'.
+
+##### Margin
+
+You can also specify the margin in which you'd like the bubble to assume around the element. Use the `data-g-margin` option for this.
+
+```HTML
+<div class='my-element' data-g-margin='100'>Hello, World!</div>
+```
+
+The above will result in a margin of 100 pixels. The default is 10 pixels. Note that the margin is the edge of the bubble, the margin does not account for the size of the comment arrow, which is the reason for the 10 pixel default.
