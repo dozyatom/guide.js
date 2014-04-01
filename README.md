@@ -33,6 +33,14 @@ $('#my-button').on('click', function() {
 });
 ```
 
+guide.js will stop if you click on the darkened background. However, if you would like to add another method to close the overlay, such as a timer, you can do the following:
+
+```javascript
+setTimeout(function() {
+	helpOverlay.guide.stop();
+}, 30000); // wait 30 seconds
+```
+
 ### Options
 
 ##### Blurb
