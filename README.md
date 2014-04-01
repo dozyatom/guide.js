@@ -1,6 +1,6 @@
 # guide.js
 
-guide.js is a jQuery plugin that creates a clickable walkthrough of elements on your webpage
+guide.js is a jQuery plugin that creates a clickable walkthrough of elements on your webpage.
 
 ## Installing
 
