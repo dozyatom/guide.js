@@ -1,9 +1,59 @@
 (function ( $ ) {
+
+    overlay = function() {
+     this.construct = function(element) {
+        this.guide = null;
+        this.classes = [];
+        this.queued = [];
+        this.nonqueued = [];
+        this.blurb = '';
+        this.count = 0;
+    };
+    this.init = function(element) {
+        this.construct();
+        var help = this;
+        this.guide = element.guide();
+        $.each(element.find('[data-blurb]'), function() {
+            if ($.inArray($(this).attr('class'), help.classes) === -1) {
+                help.classes.push($(this).attr('class'));
+                if ($(this).attr('data-order')) {
+                    var index = parseInt($(this).attr('data-order'));
+                    if (help.queued[index] != null) {
+                        help.queued.splice(index+1,0, $(this));
+                    }
+                    else {
+                        help.queued[index] = $(this);
+                    }
+                }
+                else {
+                    help.nonqueued.push($(this));
+                }
+            }
+        });
+        $.each(help.queued, function(i, e) {
+            if (e) {
+                help.blurb = $(this).attr('data-blurb');
+                $(this).addClass('blurbnum-'+help.count);
+                help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-direction') || 'bottom', margin: $(this).attr('data-margin') || 10 });
+                help.count++;
+            }
+        });
+        $.each(help.nonqueued, function() {
+            help.blurb = $(this).attr('data-blurb');
+            $(this).addClass('blurbnum-'+help.count);
+            help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-direction') || 'bottom', margin: $(this).attr('data-margin') || 10 });
+            help.count++;
+        });
+    };
+
+    return this;
+};
  
     var guide = function() {
         var container,
             defaults = {
-                margin: 10
+                margin: 10,
+                direction: 'bottom'
             },
             topMask = $("<div/>").addClass("guideMask"),
             bottomMask = $("<div/>").addClass("guideMask"),
@@ -16,7 +66,20 @@
  
             prevButton = $("<button/>").addClass("btn").html("Prev"),
             nextButton = $("<button/>").addClass("btn").html("Next"),
-            arrow = $("<div/>").addClass("guideBubble-arrow").addClass("top"),
+            arrow = $("<div/>"),
+
+            isFixed = function(element) {
+                var $element = $(element);
+                var $checkElements = $element.add($element.parents());
+                var isFixed = false;
+                $checkElements.each(function(){
+                    if ($(this).css("position") === "fixed") {
+                        isFixed = true;
+                        return false;
+                    }
+                });
+                return isFixed;
+            },
 
             gotoStep = function(i) {
                 positionMask(i);
@@ -27,7 +90,7 @@
                 if (position>=steps.length) {
                     clearGuide();
                 } else {
-                    gotoStep(position);    
+                    gotoStep(position);
                 }
             },
             prevStep = function() {
@@ -52,58 +115,62 @@
                     top = attrs.top,
                     left = attrs.left,
                     width = attrs.width,
-                    height = attrs.height;
+                    height = attrs.height,
+                    pos = 'absolute',
+                    offset = 0;
+
+                margin = parseInt(margin);
+
+                if(isFixed(element)) {
+                    pos = "fixed";
+                    offset = $(document).scrollTop();
+                }
 
                 topMask.css({
-                    height: (top - margin) + "px"
+                    height: (top - margin - offset) + "px",
+                    position: pos
                 });
                  
                 bottomMask.css({
-                    top: (height + top + margin) + "px",
-                    height: ($(document).height() - height - top - margin) + "px"
+                    top: (height + top + margin - offset) + "px",
+                    height: ($(document).height() - height - top - margin) + "px",
+                    position: pos
                 });
                  
                 leftMask.css({
                     width: (left - margin) + "px",
-                    top: (top - margin) + "px",
-                    height: (height + margin*2) + "px"
+                    top: (top - margin - offset) + "px",
+                    height: (height + margin*2) + "px",
+                    position: pos
                 });
                  
                 rightMask.css({
                     left: (left + width + margin) + "px",
-                    top: (top - margin) + "px",
+                    top: (top - margin - offset) + "px",
                     height: (height + margin*2) + "px",
                     width: ($(document).width() - width - left - margin) + "px",
+                    position: pos
                 });
             },
-            positionBubble = function(i) {
+            positionBubble = function(i) {                
                 var element = steps[i].element,
                     margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
                     top = element.offset().top,
                     left = element.offset().left,
                     width = element.outerWidth(),
-                    height = element.outerHeight();
+                    height = element.outerHeight(),
+                    direction = steps[i].options.direction,
+                    pos = 'absolute',
+                    offset = 0,
+                    toffset = 0,
+                    loffset = 0;
 
-                var css = {
-                        top: (height + top + margin + 10) + "px"
-                    };
- 
-                if ((left + bubble.outerWidth()) > $(document).width()) {
-                    $(".guideBubble-arrow", bubble).css({"right": "10px"});
-                    css.left = left + element.outerWidth() - bubble.outerWidth() + margin;
-                } else {
-                    $(".guideBubble-arrow", bubble).css({"right": "auto"});
-                     
-                    css.left = left - margin;
+
+                if (isFixed(element)) {
+                    pos = "fixed";
+                    offset = $(document).scrollTop();
                 }
- 
-                bubble.animate(css, 500, function() {
-                    scrollIntoView();
-                    if (steps[i].options.callback) {
-                        steps[i].options.callback();
-                    }
-                });
- 
+
                 $(".step", bubble).html(i + 1);
                 $(".intro", bubble).html(steps[i].intro);
                 prevButton.removeClass("disabled");
@@ -117,8 +184,40 @@
                     nextButton.html("Close").addClass("btn-danger");
                 } else {
                     nextButton.html("Next").removeClass("btn-danger");
-                }                
-                
+                } 
+
+                switch(direction) {
+                    case 'right':
+                        toffset = top - margin;
+                        loffset = width + left + margin*2;
+                    break;
+                    case 'left':
+                        toffset = top - margin;
+                        loffset = left - margin*2 - bubble.outerWidth();
+                    break;
+                    case 'top':
+                        toffset = top - bubble.outerHeight(false) - margin*2;
+                        loffset = left - margin;
+                    break;
+                    case 'bottom':
+                        toffset = top + height + margin*2;
+                        loffset = left - margin;
+                    break;
+                }
+
+                arrow.attr('class', 'guideBubble-arrow ' + direction);
+
+                var css = {
+                        top: toffset - offset,
+                        left: loffset
+                    };
+
+                bubble.css({'position': pos}).animate(css, 500, function() {
+                    scrollIntoView();
+                    if (steps[i].options.callback) {
+                        steps[i].options.callback();
+                    }
+                });               
  
                 scrollIntoView();
             },
@@ -133,22 +232,12 @@
             },
             clearGuide = function() {
                 bubble.detach();
-                topMask.add(bottomMask).add(leftMask).add(rightMask).animate({
-                    opacity: 0
-                }, 500, function() {
-                    topMask.add(bottomMask).add(leftMask).add(rightMask).detach();    
-                })
-                 
+                topMask.add(bottomMask).add(leftMask).add(rightMask).stop().fadeOut(500, function() {
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).detach();
+                });
             },
             getMaximumZIndex = function() {
-                var max = 0;   
-                $("*").each(function() {
-                    var current = parseInt($(this).css("zIndex"), 10);
-                    if(current > max) {
-                        max = current;
-                    }
-                });
-                return max;
+                return 1000000;
             }
        
  
@@ -180,7 +269,7 @@
                 });
                 
                 return {
-                    addStep: function(selector, introduction, options) {
+                    addStep: function(selector, introduction, options, direction) {
                         holdingSteps.push({
                             selector: selector,
                             intro: introduction,
@@ -190,9 +279,7 @@
                     start: function() {
                         container.append(topMask, bottomMask, leftMask, rightMask);
                         container.append(bubble);
-                        topMask.add(bottomMask).add(leftMask).add(rightMask).animate({
-                            opacity: 0.5
-                        }, 500);
+                        topMask.add(bottomMask).add(leftMask).add(rightMask).stop().show();
                         position = -1;
                         steps = [];
                         $.each(holdingSteps, function(i, step) {
@@ -209,6 +296,9 @@
                             }
                         });
                         nextStep();
+                    },
+                    end: function() {
+                        clearGuide();
                     }
                 }
             },
