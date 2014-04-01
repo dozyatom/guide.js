@@ -47,7 +47,7 @@ Your blurb nodes will, by default, order by their position in your HTML structur
 
 By default, ordered elements will show before any un-ordered elements, despite what the actual order number is. The un-ordered elements will then appear in the order they appear in the HTML structure. If you accidentally give two nodes the same ordering, guide.js will order them in the order they appear in the HTML, while still maintaining their order among other ordered nodes.
 
-Guide.js also allows you to define which side of your element you'd like the bubble to appear on. Use the following option.
+guide.js also allows you to define which side of your element you'd like the bubble to appear on. Use the following option.
 
 ```HTML
 	data-direction='top'
