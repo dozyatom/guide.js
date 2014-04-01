@@ -77,7 +77,7 @@ Your options for direction are 'top', 'bottom', 'left', and 'right'. The default
 You can also specify the margin in which you'd like the bubble to assume around the element. Use the `data-g-margin` option for this.
 
 ```HTML
-<div class='my-element' data-g-margin='100'>Hello, World!</div>
+<div data-g-blurb='Show this text.' data-g-margin='100'>Hello, World!</div>
 ```
 
 The above will result in a margin of 100 pixels. The default is 10 pixels. Note that the margin is the edge of the bubble, the margin does not account for the size of the comment arrow, which is the reason for the 10 pixel default.
