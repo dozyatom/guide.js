@@ -83,5 +83,27 @@ You can also specify the margin in which you'd like the bubble to assume around 
 
 The above will result in a margin of 100 pixels. The default is 10 pixels. Note that the margin is the edge of the bubble, the margin does not account for the size of the comment arrow, which is the reason for the 10 pixel default.
 
+## Nifty little ditties
+
+guide.js loves you, and wants your dev cycle to be as quick and painless as possible. With that in mind, we've added a few nifty features that make guide.js as flexible as we had the foresight to see (let us know how we can help otherwise).
+
+##### Fixed elements
+
+You may have experienced with other help overlays that once the bubble is set relative to the page, it's set. This is okay, except when the element you are wrapping is fixed on the page. When you begin to scroll, the overlay scrolls with the page, and your fixed element is left underneath the dark overlay. guide.js resolves this by performing a check on all nodes to determine if they are fixed on the page. If they are, the overlay will reflect that, and you can scroll your little hearts out.
+
+##### Front end PHP/Ruby, etc.
+
+We know that our users are skilled in the way of dev-fu, and that means that you'll be using guide.js with pages that aren't static. One problem that may arise is something like this:
+
+```php
+$foods = array("pizza","sandwiches","ice cream","cake"); 
+foreach ($foods as $item)
+{
+	echo "<div class='food-div' data-blurb='Here is an example of a div with text in it.'>I enjoy $item.</div>";
+}
+```
+
+What would happen here, is you would have four nodes that show in your tutorial cycle. All of them point to food div, and give you the same story: "Here is an example of a div with text in it." Likely, you would rather only have the first one included in the tutorial, and guide.js gives this to you. As guide.js loops your wrapper element searching for `data-g-blurb`, it keeps track of what classes, and what blurbs you've been using. After adding a blurb to the first element in this list, it will note that you have added a blurb to `.food-div`. On the next go-round, it will see that you are adding another blurb to `.food-div`, and it will go to the second check: the blurb text itself. If the blurb on this element is identical to the one on the previous element, it will skip the blurb entirely. However, if the blurb text differed, it would include the new blurb.
+
  [0]: https://github.com/Dozyatom/guide.js/blob/master/guide.js
  [1]: https://github.com/Dozyatom/guide.js/blob/master/guide.css
