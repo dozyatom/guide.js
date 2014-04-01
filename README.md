@@ -71,3 +71,6 @@ guide.js also allows you to define which side of your element you'd like the bub
 <div data-blurb='Show this text.' data-direction='top'>Hello, World!</div>
 ```
 Your options for direction are 'top', 'bottom', 'left', and 'right'.
+
+ [0]: https://github.com/Dozyatom/guide.js/blob/master/guide.js
+ [1]: https://github.com/Dozyatom/guide.js/blob/master/guide.css
