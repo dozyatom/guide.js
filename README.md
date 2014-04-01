@@ -19,52 +19,37 @@ Download [guide.js][0] and [guide.css][1] and add the following assets:
 
 ## Using
 
-In you document ready, first attach the guide to the parent element you'd like to mask:
+In your document ready, first create an instance of an overlay
 
-```HTML
-var guide = $("body").guide();
+```javascript
+var helpOverlay = overlay();
 ```
 
-Then attach the steps to the elements to highlight, using jquery selectors:
+Then attach an event handler (or any method you desire) to start the overlay
 
-```HTML
-guide.addStep("#hello", "This step says hello");
-guide.addStep("#world", "This step says world");
+```javascript
+$('#my-button').on('click', function() {
+		helpOverlay.guide.start();
+});
 ```
 
-Then initiate the guide, manually or via a trigger event
+In order to add new steps to your overlay, add the `data-blurb` attribute to any element on your page
 
 ```HTML
-guide.start();
+	data-blurb='This is the text that will show up when this step is reached.'
 ```
 
-## Methods
+Your blurb nodes will, by default, order by their position in your HTML structure. Nodes closer to the initial `<body>` tag will show before nodes closer to your closing `</body>` tag. If you would like to override this ordering, use the following option
 
-### .guide([options])
+```HTML
+		data-order='1'
+```
 
-Attach the guide to the selector
+By default, ordered elements will show before any un-ordered elements, despite what the actual order number is. The un-ordered elements will then appear in the order they appear in the HTML structure. If you accidentally give two nodes the same ordering, guide.js will order them in the order they appear in the HTML, while still maintaining their order among other ordered nodes.
 
-**Parameters:**
- - options : Object (optional)
-   Control the gap between the highlighted element and the mask with `margin`
+Guide.js also allows you to define which side of your element you'd like the bubble to appear on. Use the following option
 
-### guide.addStep(selector, introduction, options)
-
-Add a step to the guide
-
-**Parameters:**
- - selector : jQuery selector identifying the DOM element to highlight
- - introduction : The string to display
- - options : Object with optional settings for `margin` and `callback`
-
-### guide.start()
-
-Start the guide...
-
-## Roadmap
-- Abstract CSS (currently based on Bootstrap)
-- Remove jQuery dependency
-- Add keypress support
-
- [0]: https://github.com/Dozyatom/guide.js/blob/master/guide.js
- [1]: https://github.com/Dozyatom/guide.js/blob/master/guide.css
+```HTML
+	data-direction='top'
+```
+Your options for direction are 'top', 'bottom', 'left', and 'right'
