@@ -48,7 +48,7 @@ setTimeout(function() {
 In order to add new steps to your overlay, add the `data-blurb` attribute to any element on your page.
 
 ```HTML
-data-blurb='This is the text that will show up when this step is reached.'
+<div class='my-element' data-blurb='This is the text that will show up when this step is reached.'>Hello, World!</div>
 ```
 
 ##### Order
@@ -56,7 +56,7 @@ data-blurb='This is the text that will show up when this step is reached.'
 Your blurb nodes will, by default, order by their position in your HTML structure. Nodes closer to the initial `<body>` tag will show before nodes closer to your closing `</body>` tag. If you would like to override this ordering, use the `data-order` option.
 
 ```HTML
-data-order='1'
+<div class='my-element' data-order='1'>Hello, World!</div>
 ```
 
 You can order from 0 to any value you desire.
@@ -68,6 +68,6 @@ By default, ordered elements will show before any un-ordered elements, despite w
 guide.js also allows you to define which side of your element you'd like the bubble to appear on. Use the `data-direction` option.
 
 ```HTML
-data-direction='top'
+<div class='my-element' data-direction='top'>Hello, World!</div>
 ```
 Your options for direction are 'top', 'bottom', 'left', and 'right'.
