@@ -19,7 +19,7 @@ Download [guide.js][0] and [guide.css][1] and add the following assets:
 
 ## Using
 
-In your document ready, first create an instance of an overlay, and initialize it while passing in an element that encompasses all the nodes for this overlay. Typically, you'll just use $('body').
+In your document ready, first create an instance of an overlay, and initialize it while passing in an element that encompasses all the nodes for this overlay. Typically, you'll just use `$('body')`.
 
 ```javascript
 var helpOverlay = overlay();
