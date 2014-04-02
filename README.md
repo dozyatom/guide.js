@@ -83,6 +83,17 @@ You can also specify the margin in which you'd like the bubble to assume around 
 
 The above will result in a margin of 100 pixels. The default is 10 pixels. Note that the margin is the edge of the bubble, the margin does not account for the size of the comment arrow, which is the reason for the 10 pixel default.
 
+##### Multiple occurrences of same blurb
+
+You may find that there is a time you want to have two or more blurbs on the same page with the exact same text. Take a peek at the 'Nifty little ditties' section to see what we're doing to prevent accidental multiples. If you do want multiples however, you may use the `data-g-multiple` option on your element.
+
+```HTML
+<div data-g-blurb='Exact same text.' data-g-multiple>My blurb will show!</div>
+<div data-g-blurb='Exact same text.' data-g-multiple>So will mine!</div>
+```
+
+There are no options for `data-g-multiple`. Simply having the attribute present is enough.
+
 ## Nifty little ditties
 
 guide.js loves you, and wants your dev cycle to be as quick and painless as possible. With that in mind, we've added a few nifty features that make guide.js as flexible as we had the foresight to see (let us know how we can help otherwise).
@@ -103,7 +114,7 @@ foreach ($foods as $item)
 }
 ```
 
-What would happen here, is you would have four nodes that show in your tutorial cycle. All of them point to food div, and give you the same story: "Here is an example of a div with text in it." Likely, you would rather only have the first one included in the tutorial, and guide.js gives this to you. As guide.js loops your wrapper element searching for `data-g-blurb`, it keeps track of what classes, and what blurbs you've been using. After adding a blurb to the first element in this list, it will note that you have added a blurb to `.food-div`. On the next go-round, it will see that you are adding another blurb to `.food-div`, and it will go to the second check: the blurb text itself. If the blurb on this element is identical to the one on the previous element, it will skip the blurb entirely. However, if the blurb text differed, it would include the new blurb.
+What would happen here is you would have four nodes that show in your tutorial cycle. All of them point to a food div, and give you the same story: 'Here is an example of a div with text in it.' Likely, you would rather only have the first one included in the tutorial, and guide.js gives you this ability. As guide.js loops your wrapper element searching for `data-g-blurb`, it keeps track of what blurbs you've been using. After adding a blurb to the first element in this list, it will note that you have added a blurb with the content 'Here is an example of a div with text in it.' On the next go-round, it will see that you are adding another blurb with the same text, and it will go to the second check: the `data-g-multiple` option. If the option is set on this element, it will include the blurb. If it is not, it will skip the blurb entirely. Note that the identical blurbs do not have to be right next to each other in the HTML as in our above example. They just have to be within the same overlay wrapper element.
 
  [0]: https://github.com/Dozyatom/guide.js/blob/master/guide.js
  [1]: https://github.com/Dozyatom/guide.js/blob/master/guide.css

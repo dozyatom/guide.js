@@ -3,7 +3,6 @@
     overlay = function() {
      this.construct = function() {
         this.guide = null;
-        this.classes = [];
         this.blurbs = [];
         this.queued = [];
         this.nonqueued = [];
@@ -15,8 +14,7 @@
         var help = this;
         this.guide = element.guide();
         $.each(element.find('[data-g-blurb]'), function() {
-            if ($.inArray($(this).attr('class'), help.classes) === -1 || $.inArray($(this).attr('data-g-blurb'), help.blurbs) === -1) {
-                help.classes.push($(this).attr('class'));
+            if ($.inArray($(this).attr('data-g-blurb'), help.blurbs) === -1 || $(this).is('[data-g-multiple]')) {
                 help.blurbs.push($(this).attr('data-g-blurb'));
                 if ($(this).attr('data-g-order')) {
                     var index = parseInt($(this).attr('data-g-order'));
