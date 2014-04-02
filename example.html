@@ -24,18 +24,17 @@
 	</style>
 
 	<body>
-		<div id="hello" data-g-blurb="Show me second! Gosh darn it I really wnat to be shown first and I'm a big baby so I'll thorw a fit!!!!" data-g-direction='right' data-g-order='2'>Hello,</div>
+		<div id="hello" data-g-blurb="Show me second!" data-g-direction='right' data-g-order='2'>Hello,</div>
 		
 		<div id="world" data-g-blurb="Show me third!" data-g-order='3' data-g-direction='top'>World!</div>
 		
-		<div id="not-shown" data-g-blurb="Show me third!" data-g-order='1' data-g-direction='left'>I'm skipped because I have the same blurb as the 'World!' element.</div>
+		<div id="not-shown" data-g-blurb="Show me third!" data-g-order='1' data-g-multiple data-g-direction='left'>I will show first. And I will not be skipped even though I have the same blurb as 'World!'</div>
 		<script>
 
 			$(function() {
 			    
-			    var helpOverlay = overlay();
-			    helpOverlay.init($('body'));
-			    helpOverlay.guide.start();
+			    var helpOverlay = $('body').guide();
+			    helpOverlay.start();
 			
 			});
 

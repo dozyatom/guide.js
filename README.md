@@ -22,15 +22,14 @@ Download [guide.js][0] and [guide.css][1] and add the following assets:
 In your document ready, first create an instance of an overlay, and initialize it while passing in an element that encompasses all the nodes for this overlay. Typically, you'll just use `$('body')`.
 
 ```javascript
-var helpOverlay = overlay();
-helpOverlay.init($('body'));
+var helpOverlay = $('body').guide();
 ```
 
 Then attach an event handler (or any method you desire) to start the overlay.
 
 ```javascript
 $('#my-button').on('click', function() {
-	helpOverlay.guide.start();
+	helpOverlay.start();
 });
 ```
 
@@ -38,7 +37,7 @@ guide.js will stop if you click on the darkened background. However, if you woul
 
 ```javascript
 setTimeout(function() {
-	helpOverlay.guide.stop();
+	helpOverlay.end();
 }, 30000); // wait 30 seconds
 ```
 

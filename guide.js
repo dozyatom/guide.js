@@ -1,53 +1,4 @@
 (function ( $ ) {
-
-    overlay = function() {
-     this.construct = function() {
-        this.guide = null;
-        this.blurbs = [];
-        this.queued = [];
-        this.nonqueued = [];
-        this.blurb = '';
-        this.count = 0;
-    };
-    this.init = function(element) {
-        this.construct();
-        var help = this;
-        this.guide = element.guide();
-        $.each(element.find('[data-g-blurb]'), function() {
-            if ($.inArray($(this).attr('data-g-blurb'), help.blurbs) === -1 || $(this).is('[data-g-multiple]')) {
-                help.blurbs.push($(this).attr('data-g-blurb'));
-                if ($(this).attr('data-g-order')) {
-                    var index = parseInt($(this).attr('data-g-order'));
-                    if (help.queued[index] != null) {
-                        help.queued.splice(index+1,0, $(this));
-                    }
-                    else {
-                        help.queued[index] = $(this);
-                    }
-                }
-                else {
-                    help.nonqueued.push($(this));
-                }
-            }
-        });
-        $.each(help.queued, function(i, e) {
-            if (e) {
-                help.blurb = $(this).attr('data-g-blurb');
-                $(this).addClass('blurbnum-'+help.count);
-                help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-g-direction') || 'bottom', margin: $(this).attr('data-g-margin') || 10 });
-                help.count++;
-            }
-        });
-        $.each(help.nonqueued, function() {
-            help.blurb = $(this).attr('data-g-blurb');
-            $(this).addClass('blurbnum-'+help.count);
-            help.guide.addStep('.blurbnum-'+help.count, help.blurb, { direction: $(this).attr('data-g-direction') || 'bottom', margin: $(this).attr('data-g-margin') || 10 });
-            help.count++;
-        });
-    };
-
-    return this;
-};
  
     var guide = function() {
         var container,
@@ -60,13 +11,63 @@
             leftMask = $("<div/>").addClass("guideMask"),
             rightMask = $("<div/>").addClass("guideMask"),
             bubble = $("<div/>").addClass("guideBubble"),
-            holdingSteps,
-            steps,
-            position,
+            holdingSteps = [],
+            steps = [],
+            position = -1,
+            blurbs = [],
+            queued = [],
+            nonqueued = [],
+            blurb = '',
+            count = 0,
+            zIndex = 1000000,
  
             prevButton = $("<button/>").addClass("btn").html("Prev"),
             nextButton = $("<button/>").addClass("btn").html("Next"),
             arrow = $("<div/>"),
+
+
+            initialize = function() {
+                var element = container;
+                $.each(element.find('[data-g-blurb]'), function() {
+                    if ($.inArray($(this).attr('data-g-blurb'), blurbs) === -1 || $(this).is('[data-g-multiple]')) {
+                        blurbs.push($(this).attr('data-g-blurb'));
+                        if ($(this).attr('data-g-order')) {
+                            var index = parseInt($(this).attr('data-g-order'));
+                            if (queued[index] != null) {
+                                queued.splice(index+1,0, $(this));
+                            }
+                            else {
+                                queued[index] = $(this);
+                            }
+                        }
+                        else {
+                            nonqueued.push($(this));
+                        }
+                    }
+                });
+                $.each(queued, function(i, e) {
+                    if (e) {
+                        blurb = $(this).attr('data-g-blurb');
+                        $(this).addClass('blurbnum-'+count);
+                        addStep('.blurbnum-'+count, blurb, { direction: $(this).attr('data-g-direction') || 'bottom', margin: $(this).attr('data-g-margin') || 10 });
+                        count++;
+                    }
+                });
+                $.each(nonqueued, function() {
+                    blurb = $(this).attr('data-g-blurb');
+                    $(this).addClass('blurbnum-'+count);
+                    addStep('.blurbnum-'+count, blurb, { direction: $(this).attr('data-g-direction') || 'bottom', margin: $(this).attr('data-g-margin') || 10 });
+                    count++;
+                });
+            },
+
+            addStep = function(selector, introduction, options, direction) {
+                holdingSteps.push({
+                    selector: selector,
+                    intro: introduction,
+                    options: options || {}
+                });
+            },
 
             isFixed = function(element) {
                 var $element = $(element);
@@ -235,20 +236,14 @@
                 topMask.add(bottomMask).add(leftMask).add(rightMask).stop().fadeOut(500, function() {
                     topMask.add(bottomMask).add(leftMask).add(rightMask).detach();
                 });
-            },
-            getMaximumZIndex = function() {
-                return 1000000;
             }
        
  
         return {
             init: function(opts) {
                 container = $(this);
+                initialize();
                 options = $.extend({}, defaults, opts);
-                steps = [];
-                holdingSteps = [];
-                position = -1;
-                zIndex = getMaximumZIndex();
    
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css("z-index", zIndex + 1);
                 bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step").html("1")).append($("<div/>").addClass("intro")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
@@ -269,13 +264,6 @@
                 });
                 
                 return {
-                    addStep: function(selector, introduction, options, direction) {
-                        holdingSteps.push({
-                            selector: selector,
-                            intro: introduction,
-                            options: options || {}
-                        });
-                    },
                     start: function() {
                         container.append(topMask, bottomMask, leftMask, rightMask);
                         container.append(bubble);
