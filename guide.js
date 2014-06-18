@@ -73,7 +73,7 @@
                     left: (left + width + margin) + "px",
                     top: (top - margin) + "px",
                     height: (height + margin * 2) + "px",
-                    width: ($(document).width() - width - left - margin) + "px",
+                    width: ($('html').width() - width - left - margin) + "px",
                 });
             },
             positionBubble = function(i) {
@@ -84,28 +84,65 @@
                     width = element.outerWidth(),
                     height = element.outerHeight();
 
-                var css = {
-                    top: (height + top + margin + 10) + "px"
-                };
+                var css = {};
 
-                if ((left + bubble.outerWidth()) > $(document).width()) {
-                    $(".guideBubble-arrow", bubble).css({
-                        "right": "10px"
-                    });
-                    css.left = left + element.outerWidth() - bubble.outerWidth() + margin;
+                var theArrow = $(".guideBubble-arrow", bubble);
+
+                theArrow.removeClass('top bottom left right');
+
+                if (width > height) {
+
+                    if ((top + bubble.outerHeight()) > $('html').height()) {
+                        theArrow.addClass('bottom');
+                        css.top = (-height + top + margin + 10) + "px";
+                    } else {
+                        theArrow.addClass('top');
+                        css.top = (height + top + margin + 10) + "px";
+                    }
+
+                    if ((left + bubble.outerWidth()) > $('html').width()) {
+                        bubble.css({
+                            "right": "10px"
+                        });
+                        css.left = left + element.outerWidth() - bubble.outerWidth() + margin;
+                    } else {
+                        bubble.css({
+                            "right": "auto"
+                        });
+
+                        css.left = left - margin;
+                    }
+
                 } else {
-                    $(".guideBubble-arrow", bubble).css({
-                        "right": "auto"
-                    });
 
-                    css.left = left - margin;
+                    if ((top + bubble.outerHeight()) > $('html').height()) {
+                        bubble.css({
+                            "bottom": "10px"
+                        });
+                        css.top = (top + margin + 10) + "px";
+                    } else {
+                        bubble.css({
+                            "bottom": "auto"
+                        });
+                        css.top = (top + margin + 10) + "px";
+                    }
+
+                    if ((left + bubble.outerWidth()) > $('html').width()) {
+                        theArrow.addClass('right');
+                        css.left = left - bubble.outerWidth() - margin;
+                    } else {
+                        theArrow.addClass('left');
+                        css.left = left + element.outerWidth() + margin;
+                    }
+
                 }
 
                 bubble.animate(css, 500, function() {
                     scrollIntoView();
-                    if (steps[i].options.callback) {
-                        steps[i].options.callback();
-                    }
+                    if (typeof steps[i].options != "undefined")
+                        if (typeof steps[i].options.callback != "undefined") {
+                            steps[i].options.callback();
+                        }
                 });
 
                 $(".step", bubble).html(i + 1);
@@ -194,6 +231,9 @@
                             intro: introduction,
                             options: options || {}
                         });
+                    },
+                    setOptions: function(opts) {
+                        $(container).guide(opts);
                     },
                     start: function() {
                         container.append(topMask, bottomMask, leftMask, rightMask);
