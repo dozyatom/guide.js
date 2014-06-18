@@ -88,51 +88,58 @@
 
                 var theArrow = $(".guideBubble-arrow", bubble);
 
-                theArrow.removeClass('top bottom left right');
+                theArrow
+                    .removeClass('top bottom left right')
+                    .css({
+                        "top": null,
+                        "bottom": null,
+                        "left": null,
+                        "right": null
+                    });
 
                 if (width > height) {
 
                     if ((top + bubble.outerHeight()) > $('html').height()) {
                         theArrow.addClass('bottom');
-                        css.top = (-height + top + margin + 10) + "px";
+                        css.top = -height + top + margin * 2 + "px";
                     } else {
                         theArrow.addClass('top');
-                        css.top = (height + top + margin + 10) + "px";
+                        css.top = (height + top + margin * 2 + "px");
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
                         theArrow.css({
-                            "right": "10px"
+                            "right": margin + "px"
                         });
-                        css.left = left + element.outerWidth() - bubble.outerWidth() + margin;
+                        css.left = left + element.outerWidth() - bubble.outerWidth() + "px";
                     } else {
                         theArrow.css({
-                            "right": "auto"
+                            "left": margin + "px"
                         });
 
-                        css.left = left - margin;
+                        css.left = left + "px";
                     }
 
                 } else {
 
                     if ((top + bubble.outerHeight()) > $('html').height()) {
                         theArrow.css({
-                            "bottom": "10px"
+                            "bottom": margin + "px"
                         });
-                        css.top = (top + margin + 10) + "px";
+                        css.top = (top + height + margin) + "px";
                     } else {
                         theArrow.css({
-                            "bottom": "auto"
+                            "top": margin + "px"
                         });
-                        css.top = (top + margin + 10) + "px";
+                        css.top = (top) + "px";
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
                         theArrow.addClass('right');
-                        css.left = left - bubble.outerWidth() - margin;
+                        css.left = left - bubble.outerWidth() - margin * 2 + "px";
                     } else {
                         theArrow.addClass('left');
-                        css.left = left + element.outerWidth() + margin;
+                        css.left = left + element.outerWidth() + margin * 2 + "px";
                     }
 
                 }
