@@ -1,5 +1,5 @@
-(function ( $ ) {
- 
+(function($) {
+
     var guide = function() {
         var container,
             defaults = {
@@ -13,7 +13,7 @@
             holdingSteps,
             steps,
             position,
- 
+
             prevButton = $("<button/>").addClass("btn").html("Prev"),
             nextButton = $("<button/>").addClass("btn").html("Next"),
             arrow = $("<div/>").addClass("guideBubble-arrow").addClass("top"),
@@ -24,15 +24,15 @@
             },
             nextStep = function() {
                 position++;
-                if (position>=steps.length) {
+                if (position >= steps.length) {
                     clearGuide();
                 } else {
-                    gotoStep(position);    
+                    gotoStep(position);
                 }
             },
             prevStep = function() {
                 position--;
-                if (position<0) {
+                if (position < 0) {
                     position = steps.length - 1;
                 }
                 gotoStep(position);
@@ -57,22 +57,22 @@
                 topMask.css({
                     height: (top - margin) + "px"
                 });
-                 
+
                 bottomMask.css({
                     top: (height + top + margin) + "px",
                     height: ($(document).height() - height - top - margin) + "px"
                 });
-                 
+
                 leftMask.css({
                     width: (left - margin) + "px",
                     top: (top - margin) + "px",
-                    height: (height + margin*2) + "px"
+                    height: (height + margin * 2) + "px"
                 });
-                 
+
                 rightMask.css({
                     left: (left + width + margin) + "px",
                     top: (top - margin) + "px",
-                    height: (height + margin*2) + "px",
+                    height: (height + margin * 2) + "px",
                     width: ($(document).width() - width - left - margin) + "px",
                 });
             },
@@ -85,25 +85,29 @@
                     height = element.outerHeight();
 
                 var css = {
-                        top: (height + top + margin + 10) + "px"
-                    };
- 
+                    top: (height + top + margin + 10) + "px"
+                };
+
                 if ((left + bubble.outerWidth()) > $(document).width()) {
-                    $(".guideBubble-arrow", bubble).css({"right": "10px"});
+                    $(".guideBubble-arrow", bubble).css({
+                        "right": "10px"
+                    });
                     css.left = left + element.outerWidth() - bubble.outerWidth() + margin;
                 } else {
-                    $(".guideBubble-arrow", bubble).css({"right": "auto"});
-                     
+                    $(".guideBubble-arrow", bubble).css({
+                        "right": "auto"
+                    });
+
                     css.left = left - margin;
                 }
- 
+
                 bubble.animate(css, 500, function() {
                     scrollIntoView();
                     if (steps[i].options.callback) {
                         steps[i].options.callback();
                     }
                 });
- 
+
                 $(".step", bubble).html(i + 1);
                 $(".intro", bubble).html(steps[i].intro);
                 prevButton.removeClass("disabled");
@@ -113,19 +117,19 @@
                     prevButton.addClass("disabled");
                 }
 
-                if (position==(steps.length-1)) {
+                if (position == (steps.length - 1)) {
                     nextButton.html("Close").addClass("btn-danger");
                 } else {
                     nextButton.html("Next").removeClass("btn-danger");
-                }                
-                
- 
+                }
+
+
                 scrollIntoView();
             },
             scrollIntoView = function() {
                 var element = steps[position].element;
- 
-                if (($(document).scrollTop()>element.offset().top) || (($(document).scrollTop() + $("body").height())<element.offset().top)) {
+
+                if (($(document).scrollTop() > element.offset().top) || (($(document).scrollTop() + $("body").height()) < element.offset().top)) {
                     $('html, body').animate({
                         scrollTop: element.offset().top - 20
                     });
@@ -136,22 +140,22 @@
                 topMask.add(bottomMask).add(leftMask).add(rightMask).animate({
                     opacity: 0
                 }, 500, function() {
-                    topMask.add(bottomMask).add(leftMask).add(rightMask).detach();    
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).detach();
                 })
-                 
+
             },
             getMaximumZIndex = function() {
-                var max = 0;   
+                var max = 0;
                 $("*").each(function() {
                     var current = parseInt($(this).css("zIndex"), 10);
-                    if(current > max) {
+                    if (current > max) {
                         max = current;
                     }
                 });
                 return max;
             }
-       
- 
+
+
         return {
             init: function(opts) {
                 container = $(this);
@@ -160,7 +164,11 @@
                 holdingSteps = [];
                 position = -1;
                 zIndex = getMaximumZIndex();
-   
+
+                if (typeof opts != 'undefined')
+                    if (typeof opts.steps != 'undefined')
+                        holdingSteps = opts.steps;
+
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css("z-index", zIndex + 1);
                 bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step").html("1")).append($("<div/>").addClass("intro")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
 
@@ -178,7 +186,7 @@
                 topMask.add(bottomMask).add(leftMask).add(rightMask).on("click", function() {
                     clearGuide();
                 });
-                
+
                 return {
                     addStep: function(selector, introduction, options) {
                         holdingSteps.push({
@@ -198,7 +206,7 @@
                         $.each(holdingSteps, function(i, step) {
                             if ($(step.selector).length) {
                                 var attrs = getElementAttrs($(step.selector));
-                                if (attrs.width!=0 && attrs.height!=0) {
+                                if (attrs.width != 0 && attrs.height != 0) {
                                     steps.push({
                                         element: $(step.selector),
                                         selector: step.selector,
@@ -212,11 +220,11 @@
                     }
                 }
             },
-             
+
         }
     }();
- 
+
     $.fn.extend({
         guide: guide.init
     });
-}( jQuery ));
+}(jQuery));
