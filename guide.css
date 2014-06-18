@@ -12,7 +12,7 @@
     background-color: #fff;
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 1px 10px rgba(0,0,0,.4);
+    box-shadow: 0 1px 10px rgba(0, 0, 0, .4);
 }
 .guideBubble .intro {
     padding-bottom: 10px;
@@ -45,7 +45,6 @@
 }
 .guideBubble-arrow.right {
     right: -10px;
-    top: 10px;
     border-top-color:transparent;
     border-right-color:transparent;
     border-bottom-color:transparent;
@@ -60,7 +59,6 @@
 }
 .guideBubble-arrow.left {
     left: -10px;
-    top: 10px;
     border-top-color:transparent;
     border-right-color:white;
     border-bottom-color:transparent;
