@@ -91,10 +91,10 @@
                 theArrow
                     .removeClass('top bottom left right')
                     .css({
-                        "top": null,
-                        "bottom": null,
-                        "left": null,
-                        "right": null
+                        "top": '',
+                        "bottom": '',
+                        "left": '',
+                        "right": ''
                     });
 
                 if (width > height) {
