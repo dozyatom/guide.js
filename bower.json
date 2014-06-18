@@ -1,0 +1,21 @@
+{
+  "name": "guide.js",
+  "main": "guide.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/Dozyatom/guide.js",
+  "authors": [
+    "Dozyatom"
+  ],
+  "description": "jQuery plugin to guide the user around an html document",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1"
+  }
+}
