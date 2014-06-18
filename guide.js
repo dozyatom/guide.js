@@ -101,12 +101,12 @@
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
-                        bubble.css({
+                        theArrow.css({
                             "right": "10px"
                         });
                         css.left = left + element.outerWidth() - bubble.outerWidth() + margin;
                     } else {
-                        bubble.css({
+                        theArrow.css({
                             "right": "auto"
                         });
 
@@ -116,12 +116,12 @@
                 } else {
 
                     if ((top + bubble.outerHeight()) > $('html').height()) {
-                        bubble.css({
+                        theArrow.css({
                             "bottom": "10px"
                         });
                         css.top = (top + margin + 10) + "px";
                     } else {
-                        bubble.css({
+                        theArrow.css({
                             "bottom": "auto"
                         });
                         css.top = (top + margin + 10) + "px";
