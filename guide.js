@@ -1,26 +1,65 @@
 (function($) {
 
+    $.fn.isOnScreen = function(bounding) {
+
+        var win = $(window);
+
+        var viewport = {
+            top: win.scrollTop(),
+            left: win.scrollLeft()
+        };
+        viewport.right = viewport.left + win.width();
+        viewport.bottom = viewport.top + win.height();
+
+        var bounds = this.offset();
+        bounds.right = bounds.left + this.outerWidth();
+        bounds.bottom = bounds.top + this.outerHeight();
+
+        var win2 = $(bounding);
+
+        var viewport2 = {
+            top: win2.scrollTop(),
+            left: win2.scrollLeft()
+        };
+        viewport2.right = viewport2.left + win2.width();
+        viewport2.bottom = viewport2.top + win2.height();
+
+        var bounds2 = this.offset();
+        bounds2.right = bounds2.left + this.outerWidth();
+        bounds2.bottom = bounds2.top + this.outerHeight();
+
+        if (win2)
+            return (!(viewport2.right < bounds2.left || viewport2.left > bounds2.right || viewport2.bottom < bounds2.top || viewport2.top > bounds2.bottom));
+        return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
+
+    };
+
     var guide = function() {
         var container,
             defaults = {
                 margin: 10
             },
+
+            scrollBox = false,
             topMask = $("<div/>").addClass("guideMask"),
             bottomMask = $("<div/>").addClass("guideMask"),
             leftMask = $("<div/>").addClass("guideMask"),
             rightMask = $("<div/>").addClass("guideMask"),
             bubble = $("<div/>").addClass("guideBubble"),
+            lastScroll = 0,
             holdingSteps,
             steps,
             position,
 
-            prevButton = $("<button/>").addClass("btn").html("Prev"),
+            prevButton = $("<button/>").addClass("btn").html("Back"),
             nextButton = $("<button/>").addClass("btn").html("Next"),
             arrow = $("<div/>").addClass("guideBubble-arrow").addClass("top"),
 
             gotoStep = function(i) {
-                positionMask(i);
-                positionBubble(i);
+                scrollIntoView(function() {
+                    positionMask(i);
+                    positionBubble(i);
+                });
             },
             nextStep = function() {
                 position++;
@@ -43,7 +82,7 @@
                     left: element.offset().left,
                     width: element.outerWidth(),
                     height: element.outerHeight()
-                }
+                };
             },
             positionMask = function(i) {
                 var element = steps[i].element,
@@ -77,6 +116,11 @@
                 });
             },
             positionBubble = function(i) {
+                lastScroll = 0;
+
+                $(".step", bubble).html(i + 1);
+                $(".intro", bubble).html(steps[i].intro);
+
                 var element = steps[i].element,
                     margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
                     top = element.offset().top,
@@ -99,19 +143,19 @@
 
                 if (width > height) {
 
-                    if ((top + bubble.outerHeight()) > $('html').height()) {
+                    if ((top + height + bubble.outerHeight()) + margin * 2 > $('html').height()) {
                         theArrow.addClass('bottom');
-                        css.top = -height + top + margin * 2 + "px";
+                        css.top = top - bubble.outerHeight() - margin * 2 + "px";
                     } else {
                         theArrow.addClass('top');
-                        css.top = (height + top + margin * 2 + "px");
+                        css.top = top + height + margin * 2 + "px";
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
                         theArrow.css({
                             "right": margin + "px"
                         });
-                        css.left = left + element.outerWidth() - bubble.outerWidth() + "px";
+                        css.left = left + width - bubble.outerWidth() + "px";
                     } else {
                         theArrow.css({
                             "left": margin + "px"
@@ -122,7 +166,7 @@
 
                 } else {
 
-                    if ((top + bubble.outerHeight()) > $('html').height()) {
+                    if ((top + height + bubble.outerHeight()) > $('html').height()) {
                         theArrow.css({
                             "bottom": margin + "px"
                         });
@@ -131,7 +175,7 @@
                         theArrow.css({
                             "top": margin + "px"
                         });
-                        css.top = (top) + "px";
+                        css.top = (top - height) + "px";
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
@@ -139,7 +183,7 @@
                         css.left = left - bubble.outerWidth() - margin * 2 + "px";
                     } else {
                         theArrow.addClass('left');
-                        css.left = left + element.outerWidth() + margin * 2 + "px";
+                        css.left = left + width + margin * 2 + "px";
                     }
 
                 }
@@ -152,8 +196,6 @@
                         }
                 });
 
-                $(".step", bubble).html(i + 1);
-                $(".intro", bubble).html(steps[i].intro);
                 prevButton.removeClass("disabled");
                 nextButton.removeClass("disabled");
 
@@ -170,13 +212,53 @@
 
                 scrollIntoView();
             },
-            scrollIntoView = function() {
+            debounce = function(func, threshold, execAsap) {
+
+                var timeout;
+
+                return function debounced() {
+                    var obj = this,
+                        args = arguments;
+
+                    function delayed() {
+                        if (!execAsap)
+                            func.apply(obj, args);
+                        timeout = null;
+                    }
+
+                    if (timeout)
+                        clearTimeout(timeout);
+                    else if (execAsap)
+                        func.apply(obj, args);
+
+                    timeout = setTimeout(delayed, threshold || 100);
+                };
+
+            },
+            updateScroll = debounce(function(scrollTop) {
+                positionMask(position);
+                positionBubble(position);
+            }, 200),
+            scrollIntoView = function(callback) {
                 var element = steps[position].element;
 
-                if (($(document).scrollTop() > element.offset().top) || (($(document).scrollTop() + $("body").height()) < element.offset().top)) {
-                    $('html, body').animate({
+                var scrollElementRuler = $(document);
+                var scrollElement = $('html, body');
+                if (scrollBox) {
+                    scrollElementRuler = scrollBox;
+                    scrollElement = scrollBox;
+                }
+
+                if ((scrollElementRuler.scrollTop() > element.offset().top) || ((scrollElementRuler.scrollTop() + scrollElementRuler.height()) < element.offset().top)) {
+                    scrollElement.animate({
                         scrollTop: element.offset().top - 20
+                    }, 500, null, function() {
+                        if (callback)
+                            callback();
                     });
+                } else {
+                    if (callback)
+                        callback();
                 }
             },
             clearGuide = function() {
@@ -185,8 +267,9 @@
                     opacity: 0
                 }, 500, function() {
                     topMask.add(bottomMask).add(leftMask).add(rightMask).detach();
-                })
-
+                });
+                if (scrollBox)
+                    scrollBox.unbind('scroll');
             },
             getMaximumZIndex = function() {
                 var max = 0;
@@ -197,7 +280,7 @@
                     }
                 });
                 return max;
-            }
+            };
 
 
         return {
@@ -209,9 +292,17 @@
                 position = -1;
                 zIndex = getMaximumZIndex();
 
-                if (typeof opts != 'undefined')
+                if (typeof opts != 'undefined') {
                     if (typeof opts.steps != 'undefined')
                         holdingSteps = opts.steps;
+                    if (typeof opts.scrollBox != 'undefined') {
+                        scrollBox = $(opts.scrollBox);
+                        scrollBox.scroll(function() {
+                            updateScroll(scrollBox.scrollTop());
+                        });
+                    }
+                }
+
 
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css("z-index", zIndex + 1);
                 bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step").html("1")).append($("<div/>").addClass("intro")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
@@ -227,9 +318,16 @@
                     }
                 });
 
-                topMask.add(bottomMask).add(leftMask).add(rightMask).on("click", function() {
-                    clearGuide();
-                });
+                var maskExit = true;
+                if (typeof opts.maskExit != 'undefined') {
+                    if (!opts.maskExit)
+                        maskExit = false;
+                }
+                if (maskExit) {
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).on("click", function() {
+                        clearGuide();
+                    });
+                }
 
                 return {
                     addStep: function(selector, introduction, options) {
@@ -250,25 +348,35 @@
                         }, 500);
                         position = -1;
                         steps = [];
+
+                        function addToSteps(step) {
+                            var attrs = getElementAttrs($(step.selector));
+                            if (attrs.width != 0 && attrs.height != 0) {
+                                steps.push({
+                                    element: $(step.selector),
+                                    selector: step.selector,
+                                    intro: step.intro,
+                                    options: step.options
+                                });
+                            }
+                        }
                         $.each(holdingSteps, function(i, step) {
-                            if ($(step.selector).length) {
-                                var attrs = getElementAttrs($(step.selector));
-                                if (attrs.width != 0 && attrs.height != 0) {
-                                    steps.push({
-                                        element: $(step.selector),
-                                        selector: step.selector,
-                                        intro: step.intro,
-                                        options: step.options
-                                    });
+                            var count = 10;
+                            if (count) {
+                                count--;
+                                if ($(step.selector).length) {
+                                    console.log('add step');
+                                    addToSteps(step);
+                                } else {
+                                    throw 'Bad jquery selector: ' + step.selector;
                                 }
                             }
                         });
                         nextStep();
                     }
-                }
+                };
             },
-
-        }
+        };
     }();
 
     $.fn.extend({

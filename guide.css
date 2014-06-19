@@ -5,6 +5,9 @@
     left: 0px;
     top: 0px;
     opacity: 0;
+    pointer-events:none;
+    -webkit-transition:all .4s linear;
+    -transition:all .4s linear;
 }
 .guideBubble {
     position: absolute;
