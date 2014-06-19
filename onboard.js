@@ -175,7 +175,7 @@
                         theArrow.css({
                             "top": margin + "px"
                         });
-                        css.top = (top - height) + "px";
+                        css.top = (top - bubble.outerHeight()) + "px";
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
