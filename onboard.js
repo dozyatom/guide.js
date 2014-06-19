@@ -170,12 +170,12 @@
                         theArrow.css({
                             "bottom": margin + "px"
                         });
-                        css.top = (top + height + margin) + "px";
+                        css.top = (top + height - bubble.outerHeight()) + "px";
                     } else {
                         theArrow.css({
                             "top": margin + "px"
                         });
-                        css.top = (top - bubble.outerHeight()) + "px";
+                        css.top = (top) + "px";
                     }
 
                     if ((left + bubble.outerWidth()) > $('html').width()) {
