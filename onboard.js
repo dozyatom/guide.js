@@ -34,7 +34,7 @@
 
     };
 
-    var guide = function() {
+    var onboard = function() {
         var container,
             defaults = {
                 margin: 10
@@ -340,6 +340,9 @@
                     setOptions: function(opts) {
                         $(container).guide(opts);
                     },
+                    stop: function() {
+                        clearGuide();
+                    },
                     start: function() {
                         container.append(topMask, bottomMask, leftMask, rightMask);
                         container.append(bubble);
@@ -351,7 +354,7 @@
 
                         function addToSteps(step) {
                             var attrs = getElementAttrs($(step.selector));
-                            if (attrs.width != 0 && attrs.height != 0) {
+                            if (attrs.width !== 0 && attrs.height !== 0) {
                                 steps.push({
                                     element: $(step.selector),
                                     selector: step.selector,
@@ -380,6 +383,6 @@
     }();
 
     $.fn.extend({
-        guide: guide.init
+        onboard: onboard.init
     });
 }(jQuery));
