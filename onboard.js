@@ -263,11 +263,11 @@
             },
             clearGuide = function() {
                 bubble.detach();
-                topMask.add(bottomMask).add(leftMask).add(rightMask).animate({
-                    opacity: 0
-                }, 500, function() {
+                topMask.add(bottomMask).add(leftMask).add(rightMask).css('opacity', '0');
+                setTimeout(function() {
                     topMask.add(bottomMask).add(leftMask).add(rightMask).detach();
-                });
+                }, 500);
+
                 if (scrollBox)
                     scrollBox.unbind('scroll');
             },
