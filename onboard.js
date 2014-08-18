@@ -382,7 +382,7 @@
                                         count--;
                                         setTimeout(getSelector, 500);
                                     } else {
-                                        throw 'Bad jquery selector: ' + step.selector;
+                                        console.log('Bad jquery selector:', step.selector);
                                     }
                                 }
                             })();
