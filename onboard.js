@@ -373,15 +373,20 @@
                         }
                         $.each(holdingSteps, function(i, step) {
                             var count = 10;
-                            if (count) {
-                                count--;
+                            (function getSelector() {
                                 if ($(step.selector).length) {
                                     console.log('add step');
                                     addToSteps(step);
                                 } else {
+                                    if (count) {
+                                        count--;
+                                        setTimeout(getSelector, 500);
+                                    } else {
+
+                                    }
                                     throw 'Bad jquery selector: ' + step.selector;
                                 }
-                            }
+                            })();
                         });
                         nextStep();
                     }
