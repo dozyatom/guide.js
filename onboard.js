@@ -387,9 +387,8 @@
                                 }
                             }
                             getSelector();
-                        }).promise().done(function() {
-                            nextStep();
                         });
+                        nextStep();
                     }
                 };
             },
