@@ -373,9 +373,9 @@
                         }
                         $.each(holdingSteps, function(i, step) {
                             var count = 10;
-                            (function getSelector() {
+
+                            function getSelector() {
                                 if ($(step.selector).length) {
-                                    console.log('add step');
                                     addToSteps(step);
                                 } else {
                                     if (count) {
@@ -385,9 +385,11 @@
                                         console.log('Bad jquery selector:', step.selector);
                                     }
                                 }
-                            })();
+                            }
+                            getSelector();
+                        }).promise().done(function() {
+                            nextStep();
                         });
-                        nextStep();
                     }
                 };
             },
