@@ -57,8 +57,16 @@
 
             gotoStep = function(i) {
                 scrollIntoView(function() {
+                    if (typeof steps[i].options.before != 'undefined') {
+                        steps[i].options.before();
+                    }
                     positionMask(i);
                     positionBubble(i);
+                    if (typeof steps[i].options.after != 'undefined') {
+                        setTimeout(function() {
+                            steps[i].options.after();
+                        }, 500);
+                    }
                 });
             },
             nextStep = function() {
@@ -119,7 +127,7 @@
                 lastScroll = 0;
 
                 $(".step", bubble).html(i + 1);
-                $(".intro", bubble).html(steps[i].intro);
+                $(".onboard", bubble).html(steps[i].onboard);
 
                 var element = steps[i].element,
                     margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
@@ -305,7 +313,7 @@
 
 
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css("z-index", zIndex + 1);
-                bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step").html("1")).append($("<div/>").addClass("intro")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
+                bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step").html("1")).append($("<div/>").addClass("onboard")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
 
                 prevButton.on("click", function() {
                     if (!$(this).hasClass("disabled")) {
@@ -330,10 +338,10 @@
                 }
 
                 return {
-                    addStep: function(selector, introduction, options) {
+                    addStep: function(selector, onboard, options) {
                         holdingSteps.push({
                             selector: selector,
-                            intro: introduction,
+                            onboard: onboard,
                             options: options || {}
                         });
                     },
@@ -358,8 +366,8 @@
                                 steps.push({
                                     element: $(step.selector),
                                     selector: step.selector,
-                                    intro: step.intro,
-                                    options: step.options
+                                    onboard: step.onboard,
+                                    options: step.options ? step.options : {}
                                 });
                             }
                         }
