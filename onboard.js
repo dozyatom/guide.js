@@ -50,26 +50,55 @@
             holdingSteps,
             steps,
             position,
+            clickThrough = false,
 
             prevButton = $("<button/>").addClass("btn").html("Back"),
-            nextButton = $("<button/>").addClass("btn").html("Next"),
+            nextButton = $("<button/>").addClass("btn btn-success").html("Next"),
             arrow = $("<div/>").addClass("guideBubble-arrow").addClass("top"),
+            count = 20,
+
+            getElement = function(i, start, callback) {
+                if (start) {
+                    count = 30;
+                }
+                var element = $(steps[i].selector);
+                if (!element.length || element.width() <= 0 && element.height() <= 0) {
+                    if (count) {
+                        count--;
+                        setTimeout(function() {
+                            getElement(i, false, callback);
+                        }, 2000);
+                    } else {
+                        console.log('Bad jquery selector:', steps[i].selector);
+                    }
+                } else {
+                    callback(element);
+                }
+            },
 
             gotoStep = function(i) {
+                var delay = 0;
                 scrollIntoView(function() {
-                    if (typeof steps[i].options.before != 'undefined') {
-                        steps[i].options.before();
+                    if (typeof steps[i].options != 'undefined') {
+                        if (typeof steps[i].options.before != 'undefined') {
+                            steps[i].options.before();
+                        }
+                        delay = angular.isDefined(steps[i].options.delay) ? steps[i].options.delay : delay;
                     }
-                    positionMask(i);
-                    positionBubble(i);
-                    if (typeof steps[i].options.after != 'undefined') {
-                        setTimeout(function() {
-                            steps[i].options.after();
-                        }, 500);
-                    }
+                    setTimeout(function() {
+                        positionMask(i);
+                        positionBubble(i);
+                    }, delay);
                 });
             },
             nextStep = function() {
+                if (position > -1) {
+                    if (typeof steps[position].options != 'undefined') {
+                        if (typeof steps[position].options.after != 'undefined') {
+                            steps[position].options.after();
+                        }
+                    }
+                }
                 position++;
                 if (position >= steps.length) {
                     clearGuide();
@@ -93,34 +122,35 @@
                 };
             },
             positionMask = function(i) {
-                var element = steps[i].element,
-                    margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
-                    attrs = getElementAttrs(element),
-                    top = attrs.top,
-                    left = attrs.left,
-                    width = attrs.width,
-                    height = attrs.height;
+                getElement(i, true, function(element) {
+                    var margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
+                        attrs = getElementAttrs(element),
+                        top = attrs.top,
+                        left = attrs.left,
+                        width = attrs.width,
+                        height = attrs.height;
 
-                topMask.css({
-                    height: (top - margin) + "px"
-                });
+                    topMask.css({
+                        height: (top - margin) + "px"
+                    });
 
-                bottomMask.css({
-                    top: (height + top + margin) + "px",
-                    height: ($(document).height() - height - top - margin) + "px"
-                });
+                    bottomMask.css({
+                        top: (height + top + margin) + "px",
+                        height: ($(document).height() - height - top - margin) + "px"
+                    });
 
-                leftMask.css({
-                    width: (left - margin) + "px",
-                    top: (top - margin) + "px",
-                    height: (height + margin * 2) + "px"
-                });
+                    leftMask.css({
+                        width: (left - margin) + "px",
+                        top: (top - margin) + "px",
+                        height: (height + margin * 2) + "px"
+                    });
 
-                rightMask.css({
-                    left: (left + width + margin) + "px",
-                    top: (top - margin) + "px",
-                    height: (height + margin * 2) + "px",
-                    width: ($('html').width() - width - left - margin) + "px",
+                    rightMask.css({
+                        left: (left + width + margin) + "px",
+                        top: (top - margin) + "px",
+                        height: (height + margin * 2) + "px",
+                        width: ($('html').width() - width - left - margin) + "px",
+                    });
                 });
             },
             positionBubble = function(i) {
@@ -129,96 +159,97 @@
                 $(".step", bubble).html(i + 1);
                 $(".onboard", bubble).html(steps[i].onboard);
 
-                var element = steps[i].element,
-                    margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
-                    top = element.offset().top,
-                    left = element.offset().left,
-                    width = element.outerWidth(),
-                    height = element.outerHeight();
+                getElement(i, true, function(element) {
+                    var margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
+                        top = element.offset().top,
+                        left = element.offset().left,
+                        width = element.outerWidth(),
+                        height = element.outerHeight();
 
-                var css = {};
+                    var css = {};
 
-                var theArrow = $(".guideBubble-arrow", bubble);
+                    var theArrow = $(".guideBubble-arrow", bubble);
 
-                theArrow
-                    .removeClass('top bottom left right')
-                    .css({
-                        "top": '',
-                        "bottom": '',
-                        "left": '',
-                        "right": ''
+                    theArrow
+                        .removeClass('top bottom left right')
+                        .css({
+                            "top": '',
+                            "bottom": '',
+                            "left": '',
+                            "right": ''
+                        });
+
+                    if (width > height) {
+
+                        if ((top + height + bubble.outerHeight()) + margin * 2 > $('html').height()) {
+                            theArrow.addClass('bottom');
+                            css.top = top - bubble.outerHeight() - margin * 2 + "px";
+                        } else {
+                            theArrow.addClass('top');
+                            css.top = top + height + margin * 2 + "px";
+                        }
+
+                        if ((left + bubble.outerWidth()) > $('html').width()) {
+                            theArrow.css({
+                                "right": margin + "px"
+                            });
+                            css.left = left + width - bubble.outerWidth() + "px";
+                        } else {
+                            theArrow.css({
+                                "left": margin + "px"
+                            });
+
+                            css.left = left + "px";
+                        }
+
+                    } else {
+
+                        if ((top + height + bubble.outerHeight()) > $('html').height()) {
+                            theArrow.css({
+                                "bottom": margin + "px"
+                            });
+                            css.top = (top + height - bubble.outerHeight()) + "px";
+                        } else {
+                            theArrow.css({
+                                "top": margin + "px"
+                            });
+                            css.top = (top) + "px";
+                        }
+
+                        if ((left + bubble.outerWidth()) > $('html').width()) {
+                            theArrow.addClass('right');
+                            css.left = left - bubble.outerWidth() - margin * 2 + "px";
+                        } else {
+                            theArrow.addClass('left');
+                            css.left = left + width + margin * 2 + "px";
+                        }
+
+                    }
+
+                    bubble.animate(css, 500, function() {
+                        scrollIntoView();
+                        if (typeof steps[i].options != "undefined")
+                            if (typeof steps[i].options.callback != "undefined") {
+                                steps[i].options.callback();
+                            }
                     });
 
-                if (width > height) {
+                    prevButton.removeClass("disabled");
+                    nextButton.removeClass("disabled");
 
-                    if ((top + height + bubble.outerHeight()) + margin * 2 > $('html').height()) {
-                        theArrow.addClass('bottom');
-                        css.top = top - bubble.outerHeight() - margin * 2 + "px";
-                    } else {
-                        theArrow.addClass('top');
-                        css.top = top + height + margin * 2 + "px";
+                    if (!position) {
+                        prevButton.addClass("disabled");
                     }
 
-                    if ((left + bubble.outerWidth()) > $('html').width()) {
-                        theArrow.css({
-                            "right": margin + "px"
-                        });
-                        css.left = left + width - bubble.outerWidth() + "px";
+                    if (position == (steps.length - 1)) {
+                        nextButton.html("Close").addClass("btn-danger");
                     } else {
-                        theArrow.css({
-                            "left": margin + "px"
-                        });
-
-                        css.left = left + "px";
+                        nextButton.html("Next").removeClass("btn-danger");
                     }
 
-                } else {
 
-                    if ((top + height + bubble.outerHeight()) > $('html').height()) {
-                        theArrow.css({
-                            "bottom": margin + "px"
-                        });
-                        css.top = (top + height - bubble.outerHeight()) + "px";
-                    } else {
-                        theArrow.css({
-                            "top": margin + "px"
-                        });
-                        css.top = (top) + "px";
-                    }
-
-                    if ((left + bubble.outerWidth()) > $('html').width()) {
-                        theArrow.addClass('right');
-                        css.left = left - bubble.outerWidth() - margin * 2 + "px";
-                    } else {
-                        theArrow.addClass('left');
-                        css.left = left + width + margin * 2 + "px";
-                    }
-
-                }
-
-                bubble.animate(css, 500, function() {
                     scrollIntoView();
-                    if (typeof steps[i].options != "undefined")
-                        if (typeof steps[i].options.callback != "undefined") {
-                            steps[i].options.callback();
-                        }
                 });
-
-                prevButton.removeClass("disabled");
-                nextButton.removeClass("disabled");
-
-                if (!position) {
-                    prevButton.addClass("disabled");
-                }
-
-                if (position == (steps.length - 1)) {
-                    nextButton.html("Close").addClass("btn-danger");
-                } else {
-                    nextButton.html("Next").removeClass("btn-danger");
-                }
-
-
-                scrollIntoView();
             },
             debounce = function(func, threshold, execAsap) {
 
@@ -248,26 +279,26 @@
                 positionBubble(position);
             }, 200),
             scrollIntoView = function(callback) {
-                var element = steps[position].element;
+                getElement(position, true, function(element) {
+                    var scrollElementRuler = $(document);
+                    var scrollElement = $('html, body');
+                    if (scrollBox) {
+                        scrollElementRuler = scrollBox;
+                        scrollElement = scrollBox;
+                    }
 
-                var scrollElementRuler = $(document);
-                var scrollElement = $('html, body');
-                if (scrollBox) {
-                    scrollElementRuler = scrollBox;
-                    scrollElement = scrollBox;
-                }
-
-                if ((scrollElementRuler.scrollTop() > element.offset().top) || ((scrollElementRuler.scrollTop() + scrollElementRuler.height()) < element.offset().top)) {
-                    scrollElement.animate({
-                        scrollTop: element.offset().top - 20
-                    }, 500, null, function() {
+                    if ((scrollElementRuler.scrollTop() > element.offset().top) || ((scrollElementRuler.scrollTop() + scrollElementRuler.height()) < element.offset().top)) {
+                        scrollElement.animate({
+                            scrollTop: element.offset().top - 20
+                        }, 500, null, function() {
+                            if (callback)
+                                callback();
+                        });
+                    } else {
                         if (callback)
                             callback();
-                    });
-                } else {
-                    if (callback)
-                        callback();
-                }
+                    }
+                });
             },
             clearGuide = function() {
                 bubble.detach();
@@ -303,6 +334,8 @@
                 if (typeof opts != 'undefined') {
                     if (typeof opts.steps != 'undefined')
                         holdingSteps = opts.steps;
+                    if (typeof opts.clickThrough != 'undefined')
+                        clickThrough = opts.clickThrough;
                     if (typeof opts.scrollBox != 'undefined') {
                         scrollBox = $(opts.scrollBox);
                         scrollBox.scroll(function() {
@@ -313,7 +346,7 @@
 
 
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css("z-index", zIndex + 1);
-                bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step").html("1")).append($("<div/>").addClass("onboard")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
+                bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step btn-primary").html("1")).append($("<div/>").addClass("onboard")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
 
                 prevButton.on("click", function() {
                     if (!$(this).hasClass("disabled")) {
@@ -335,6 +368,10 @@
                     topMask.add(bottomMask).add(leftMask).add(rightMask).on("click", function() {
                         clearGuide();
                     });
+                }
+
+                if (clickThrough) {
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).css("pointer-events", "none");
                 }
 
                 return {
@@ -361,34 +398,25 @@
                         steps = [];
 
                         function addToSteps(step) {
-                            var attrs = getElementAttrs($(step.selector));
-                            if (attrs.width !== 0 && attrs.height !== 0) {
-                                steps.push({
-                                    element: $(step.selector),
-                                    selector: step.selector,
-                                    onboard: step.onboard,
-                                    options: step.options ? step.options : {}
-                                });
-                            }
+                            steps.push({
+                                selector: step.selector,
+                                onboard: step.onboard,
+                                options: step.options ? step.options : {}
+                            });
                         }
                         $.each(holdingSteps, function(i, step) {
-                            var count = 10;
-
-                            function getSelector() {
-                                if ($(step.selector).length) {
-                                    addToSteps(step);
-                                } else {
-                                    if (count) {
-                                        count--;
-                                        setTimeout(getSelector, 500);
-                                    } else {
-                                        console.log('Bad jquery selector:', step.selector);
-                                    }
-                                }
-                            }
-                            getSelector();
+                            addToSteps(step);
                         });
                         nextStep();
+                    },
+                    next: function() {
+                        nextStep();
+                    },
+                    previous: function() {
+                        prevStep();
+                    },
+                    gotoStep: function(i) {
+                        gotoStep(i);
                     }
                 };
             },
