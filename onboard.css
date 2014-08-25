@@ -1,4 +1,4 @@
-.guideMask {
+.onboardMask {
     background-color: #000;
     position: absolute;
     width: 100%;
@@ -8,7 +8,10 @@
     -webkit-transition: all .4s linear;
     -transition: all .4s linear;
 }
-.guideBubble {
+.onboardMask.bottom {
+    height: 100%;
+}
+.onboardBubble {
     position: absolute;
     width: 250px;
     background-color: #fff;
@@ -16,12 +19,12 @@
     border-radius: 5px;
     box-shadow: 0 1px 10px rgba(0, 0, 0, .4);
 }
-.guideBubble .onboard {
+.onboardBubble .onboard {
     padding-bottom: 10px;
     margin-left: 26px;
     font-size: 12px;
 }
-.guideBubble .step {
+.onboardBubble .step {
     position: absolute;
     margin: 0 4px 5px 0;
     text-align: center;
@@ -34,33 +37,33 @@
     top: 7px;
     left: 8px;
 }
-.guideBubble-arrow {
+.onboardBubble-arrow {
     border: 5px solid white;
     content: '';
     position: absolute;
 }
-.guideBubble-arrow.top {
+.onboardBubble-arrow.top {
     top: -10px;
     border-top-color: transparent;
     border-right-color: transparent;
     border-bottom-color: white;
     border-left-color: transparent;
 }
-.guideBubble-arrow.right {
+.onboardBubble-arrow.right {
     right: -10px;
     border-top-color: transparent;
     border-right-color: transparent;
     border-bottom-color: transparent;
     border-left-color: white;
 }
-.guideBubble-arrow.bottom {
+.onboardBubble-arrow.bottom {
     bottom: -10px;
     border-top-color: white;
     border-right-color: transparent;
     border-bottom-color: transparent;
     border-left-color: transparent;
 }
-.guideBubble-arrow.left {
+.onboardBubble-arrow.left {
     left: -10px;
     border-top-color: transparent;
     border-right-color: white;

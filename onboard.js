@@ -41,11 +41,11 @@
             },
 
             scrollBox = false,
-            topMask = $("<div/>").addClass("guideMask"),
-            bottomMask = $("<div/>").addClass("guideMask"),
-            leftMask = $("<div/>").addClass("guideMask"),
-            rightMask = $("<div/>").addClass("guideMask"),
-            bubble = $("<div/>").addClass("guideBubble"),
+            topMask = $("<div/>").addClass("onboardMask top"),
+            bottomMask = $("<div/>").addClass("onboardMask bottom"),
+            leftMask = $("<div/>").addClass("onboardMask left"),
+            rightMask = $("<div/>").addClass("onboardMask right"),
+            bubble = $("<div/>").addClass("onboardBubble"),
             lastScroll = 0,
             holdingSteps,
             steps,
@@ -54,7 +54,7 @@
 
             prevButton = $("<button/>").addClass("btn").html("Back"),
             nextButton = $("<button/>").addClass("btn btn-success").html("Next"),
-            arrow = $("<div/>").addClass("guideBubble-arrow").addClass("top"),
+            arrow = $("<div/>").addClass("onboardBubble-arrow").addClass("top"),
             count = 20,
 
             getElement = function(i, start, callback) {
@@ -67,7 +67,7 @@
                         count--;
                         setTimeout(function() {
                             getElement(i, false, callback);
-                        }, 2000);
+                        }, 300);
                     } else {
                         console.log('Bad jquery selector:', steps[i].selector);
                     }
@@ -168,7 +168,7 @@
 
                     var css = {};
 
-                    var theArrow = $(".guideBubble-arrow", bubble);
+                    var theArrow = $(".onboardBubble-arrow", bubble);
 
                     theArrow
                         .removeClass('top bottom left right')
