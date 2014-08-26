@@ -58,6 +58,9 @@
             count = 20,
 
             getElement = function(i, start, callback) {
+                if (!steps) {
+                    return;
+                }
                 if (start) {
                     count = 30;
                 }
@@ -79,31 +82,35 @@
             gotoStep = function(i) {
                 var delay = 0;
                 scrollIntoView(function() {
-                    if (typeof steps[i].options != 'undefined') {
-                        if (typeof steps[i].options.before != 'undefined') {
-                            steps[i].options.before();
+                    if (steps) {
+                        if (typeof steps[i].options != 'undefined') {
+                            if (typeof steps[i].options.before != 'undefined') {
+                                steps[i].options.before();
+                            }
+                            delay = angular.isDefined(steps[i].options.delay) ? steps[i].options.delay : delay;
                         }
-                        delay = angular.isDefined(steps[i].options.delay) ? steps[i].options.delay : delay;
+                        setTimeout(function() {
+                            positionMask(i);
+                            positionBubble(i);
+                        }, delay);
                     }
-                    setTimeout(function() {
-                        positionMask(i);
-                        positionBubble(i);
-                    }, delay);
                 });
             },
             nextStep = function() {
-                if (position > -1) {
-                    if (typeof steps[position].options != 'undefined') {
-                        if (typeof steps[position].options.after != 'undefined') {
-                            steps[position].options.after();
+                if (steps) {
+                    if (position > -1) {
+                        if (typeof steps[position].options != 'undefined') {
+                            if (typeof steps[position].options.after != 'undefined') {
+                                steps[position].options.after();
+                            }
                         }
                     }
-                }
-                position++;
-                if (position >= steps.length) {
-                    clearGuide();
-                } else {
-                    gotoStep(position);
+                    position++;
+                    if (position >= steps.length) {
+                        clearGuide();
+                    } else {
+                        gotoStep(position);
+                    }
                 }
             },
             prevStep = function() {
@@ -129,8 +136,6 @@
                         left = attrs.left,
                         width = attrs.width,
                         height = attrs.height;
-
-                    console.log(top - margin);
 
                     topMask.css({
                         top: 0 - margin + 'px',
@@ -161,7 +166,9 @@
                 lastScroll = 0;
 
                 $(".step", bubble).html(i + 1);
-                $(".onboard", bubble).html(steps[i].onboard);
+                if (steps) {
+                    $(".onboard", bubble).html(steps[i].onboard);
+                }
 
                 getElement(i, true, function(element) {
                     var margin = (steps[i].options && steps[i].options.margin) ? steps[i].options.margin : options.margin,
@@ -234,10 +241,12 @@
 
                     bubble.animate(css, 400, 'linear', function() {
                         scrollIntoView();
-                        if (typeof steps[i].options != "undefined")
-                            if (typeof steps[i].options.callback != "undefined") {
-                                steps[i].options.callback();
-                            }
+                        if (steps) {
+                            if (typeof steps[i].options != "undefined")
+                                if (typeof steps[i].options.callback != "undefined") {
+                                    steps[i].options.callback();
+                                }
+                        }
                     });
 
                     prevButton.removeClass("disabled");
