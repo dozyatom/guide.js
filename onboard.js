@@ -83,7 +83,7 @@
                         if (typeof steps[i].options.before != 'undefined') {
                             steps[i].options.before();
                         }
-                        delay = angular.isDefined(steps[i].options.delay) ? steps[i].options.delay : delay;
+                        delay = (typeof steps[i].options.delay != 'undefined') ? steps[i].options.delay : delay;
                     }
                     setTimeout(function() {
                         positionMask(i);
