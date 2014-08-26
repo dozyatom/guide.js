@@ -131,7 +131,8 @@
                         height = attrs.height;
 
                     topMask.css({
-                        height: (top - margin) + "px"
+                        top: 0 - margin + 'px',
+                        height: top + "px"
                     });
 
                     bottomMask.css({
@@ -140,7 +141,8 @@
                     });
 
                     leftMask.css({
-                        width: (left - margin) + "px",
+                        left: 0 - margin + "px",
+                        width: left + "px",
                         top: (top - margin) + "px",
                         height: (height + margin * 2) + "px"
                     });
@@ -226,7 +228,7 @@
 
                     }
 
-                    bubble.animate(css, 500, function() {
+                    bubble.animate(css, 400, 'linear', function() {
                         scrollIntoView();
                         if (typeof steps[i].options != "undefined")
                             if (typeof steps[i].options.callback != "undefined") {
@@ -301,10 +303,16 @@
                 });
             },
             clearGuide = function() {
-                bubble.detach();
+
+                bubble.animate({
+                    top: '-50%',
+                }, 400, 'linear', function() {
+                    bubble.remove();
+                });
+
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css('opacity', '0');
                 setTimeout(function() {
-                    topMask.add(bottomMask).add(leftMask).add(rightMask).detach();
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).remove();
                 }, 500);
 
                 if (scrollBox)
