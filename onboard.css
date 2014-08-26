@@ -13,12 +13,12 @@
     height: 0;
 }
 .onboardMask.left {
-    width: 50%;
+    width: 0;
     height: 0;
 }
 .onboardMask.right {
-    width: 50%;
-    left: 50%;
+    width: 100%;
+    left: 0;
     height: 0;
 }
 .onboardMask.bottom {
@@ -31,6 +31,9 @@
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 1px 10px rgba(0, 0, 0, .4);
+    left: 0;
+    top: 0;
+    opacity: 0;
 }
 .onboardBubble .onboard {
     padding-bottom: 10px;
@@ -46,7 +49,7 @@
     height: 20px;
     border-radius: 10px;
     line-height: 20px;
-    font-size: 1em;
+    font-size: 1.4em;
     top: 7px;
     left: 8px;
 }

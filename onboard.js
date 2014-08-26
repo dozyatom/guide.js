@@ -83,7 +83,7 @@
                         if (typeof steps[i].options.before != 'undefined') {
                             steps[i].options.before();
                         }
-                        delay = (typeof steps[i].options.delay != 'undefined') ? steps[i].options.delay : delay;
+                        delay = angular.isDefined(steps[i].options.delay) ? steps[i].options.delay : delay;
                     }
                     setTimeout(function() {
                         positionMask(i);
@@ -130,6 +130,8 @@
                         width = attrs.width,
                         height = attrs.height;
 
+                    console.log(top - margin);
+
                     topMask.css({
                         top: 0 - margin + 'px',
                         height: top + "px"
@@ -168,7 +170,9 @@
                         width = element.outerWidth(),
                         height = element.outerHeight();
 
-                    var css = {};
+                    var css = {
+                        opacity: 1
+                    };
 
                     var theArrow = $(".onboardBubble-arrow", bubble);
 
@@ -304,15 +308,17 @@
             },
             clearGuide = function() {
 
+                steps = null;
+
                 bubble.animate({
-                    top: '-50%',
+                    top: -(bubble.outerHeight() * 2) + 'px',
                 }, 400, 'linear', function() {
-                    bubble.remove();
+                    bubble.removeAttr('style').remove();
                 });
 
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css('opacity', '0');
                 setTimeout(function() {
-                    topMask.add(bottomMask).add(leftMask).add(rightMask).remove();
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).removeAttr('style').remove();
                 }, 500);
 
                 if (scrollBox)
