@@ -46,6 +46,8 @@
             leftMask = $("<div/>").addClass("onboardMask left"),
             rightMask = $("<div/>").addClass("onboardMask right"),
             bubble = $("<div/>").addClass("onboardBubble"),
+            loader = $("<div/>").addClass("onboardLoaderWrap").html('<div class="onboardLoader"><div class="onboardDots"><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div><div class="onboardDot"></div></div></div>'),
+            loaderMessage = $('<div/>').addClass("onboardLoaderMessage"),
             lastScroll = 0,
             holdingSteps,
             steps,
@@ -62,19 +64,33 @@
                     return;
                 }
                 if (start) {
-                    count = 30;
+                    count = 100;
                 }
                 var element = $(steps[i].selector);
                 if (!element.length || element.width() <= 0 && element.height() <= 0) {
                     if (count) {
+                        loaderMessage.html('Waiting...');
+                        loader.css({
+                            opacity: 1,
+                            'pointer-events': 'all'
+                        });
                         count--;
                         setTimeout(function() {
                             getElement(i, false, callback);
-                        }, 300);
+                        }, 100);
                     } else {
                         console.log('Bad jquery selector:', steps[i].selector);
+                        console.log('Exiting Tour...');
+                        loaderMessage.html('Uh Oh! Something went wrong with this tour, but try, try again!');
+                        setTimeout(function() {
+                            clearGuide();
+                        }, 8000);
                     }
                 } else {
+                    loader.css({
+                        opacity: 0,
+                        'pointer-events': 'none'
+                    });
                     callback(element);
                 }
             },
@@ -325,9 +341,14 @@
                     bubble.removeAttr('style').remove();
                 });
 
+                loader.css({
+                    opacity: 0,
+                    'pointer-events': 'none'
+                });
+
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css('opacity', '0');
                 setTimeout(function() {
-                    topMask.add(bottomMask).add(leftMask).add(rightMask).removeAttr('style').remove();
+                    topMask.add(bottomMask).add(leftMask).add(rightMask).removeAttr('style').add(loader).remove();
                 }, 500);
 
                 if (scrollBox)
@@ -369,6 +390,8 @@
 
 
                 topMask.add(bottomMask).add(leftMask).add(rightMask).css("z-index", zIndex + 1);
+                loader.css("z-index", zIndex + 3);
+                loader.append(loaderMessage);
                 bubble.css("z-index", zIndex + 2).html("").append(arrow).append($("<div/>").addClass("step btn-primary").html("1")).append($("<div/>").addClass("onboard")).append($("<div/>").addClass("btn-group pull-right").append(prevButton).append(nextButton));
 
                 prevButton.on("click", function() {
@@ -412,8 +435,7 @@
                         clearGuide();
                     },
                     start: function() {
-                        container.append(topMask, bottomMask, leftMask, rightMask);
-                        container.append(bubble);
+                        container.append(topMask, bottomMask, leftMask, rightMask, bubble, loader);
                         topMask.add(bottomMask).add(leftMask).add(rightMask).animate({
                             opacity: 0.5
                         }, 500);
