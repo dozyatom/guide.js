@@ -54,8 +54,8 @@
             position,
             clickThrough = false,
 
-            prevButton = $("<button/>").addClass("btn").html("Back"),
-            nextButton = $("<button/>").addClass("btn btn-success").html("Next"),
+            prevButton = $("<button type='button'/>").addClass("btn").html("Back"),
+            nextButton = $("<button type='button'/>").addClass("btn btn-success").html("Next"),
             arrow = $("<div/>").addClass("onboardBubble-arrow").addClass("top"),
             count = 20,
 
@@ -398,10 +398,18 @@
                     if (!$(this).hasClass("disabled")) {
                         prevStep();
                     }
+                }).keypress(function(e) {
+                    if (e.which == 13) { // Checks for the enter key
+                        e.preventDefault(); // Stops IE from triggering the button to be clicked
+                    }
                 });
                 nextButton.on("click", function() {
                     if (!$(this).hasClass("disabled")) {
                         nextStep();
+                    }
+                }).keypress(function(e) {
+                    if (e.which == 13) { // Checks for the enter key
+                        e.preventDefault(); // Stops IE from triggering the button to be clicked
                     }
                 });
 
