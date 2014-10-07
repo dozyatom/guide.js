@@ -386,6 +386,9 @@
                             updateScroll(scrollBox.scrollTop());
                         });
                     }
+                    if (typeof opts.afterExit != 'undefined') {
+                        afterExit = opts.afterExit;
+                    }
                 }
 
 
@@ -421,6 +424,9 @@
                 if (maskExit) {
                     topMask.add(bottomMask).add(leftMask).add(rightMask).on("click", function() {
                         clearGuide();
+                        if (afterExit) {
+                            afterExit();
+                        }
                     });
                 }
 
