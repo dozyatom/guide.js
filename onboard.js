@@ -40,6 +40,7 @@
                 margin: 10
             },
 
+            bodyContainer = $('body'),
             scrollBox = false,
             topMask = $("<div/>").addClass("onboardMask top"),
             bottomMask = $("<div/>").addClass("onboardMask bottom"),
@@ -64,7 +65,7 @@
                     return;
                 }
                 if (start) {
-                    count = 100;
+                    count = 3 * 10;
                 }
                 var element = $(steps[i].selector);
                 if (!element.length || element.width() <= 0 && element.height() <= 0) {
@@ -174,7 +175,7 @@
                         left: (left + width + margin) + "px",
                         top: (top - margin) + "px",
                         height: (height + margin * 2) + "px",
-                        width: ($('html').width() - width - left - margin) + "px",
+                        width: (bodyContainer.width() - width - left - margin) + "px",
                     });
                 });
             },
@@ -210,7 +211,7 @@
 
                     if (width > height) {
 
-                        if ((top + height + bubble.outerHeight()) + margin * 2 > $('html').height()) {
+                        if ((top + height + bubble.outerHeight()) + margin * 2 > bodyContainer.height()) {
                             theArrow.addClass('bottom');
                             css.top = top - bubble.outerHeight() - margin * 2 + "px";
                         } else {
@@ -218,7 +219,7 @@
                             css.top = top + height + margin * 2 + "px";
                         }
 
-                        if ((left + bubble.outerWidth()) > $('html').width()) {
+                        if ((left + bubble.outerWidth()) > bodyContainer.width()) {
                             theArrow.css({
                                 "right": margin + "px"
                             });
@@ -233,7 +234,7 @@
 
                     } else {
 
-                        if ((top + height + bubble.outerHeight()) > $('html').height()) {
+                        if ((top + height + bubble.outerHeight()) > bodyContainer.height()) {
                             theArrow.css({
                                 "bottom": margin + "px"
                             });
@@ -245,7 +246,7 @@
                             css.top = (top) + "px";
                         }
 
-                        if ((left + bubble.outerWidth()) > $('html').width()) {
+                        if ((left + bubble.outerWidth()) > bodyContainer.width()) {
                             theArrow.addClass('right');
                             css.left = left - bubble.outerWidth() - margin * 2 + "px";
                         } else {
@@ -385,6 +386,9 @@
                         scrollBox.scroll(function() {
                             updateScroll(scrollBox.scrollTop());
                         });
+                    }
+                    if (typeof opts.bodyContainer != 'undefined') {
+                        bodyContainer = $(opts.bodyContainer);
                     }
                     if (typeof opts.afterExit != 'undefined') {
                         afterExit = opts.afterExit;
