@@ -1,4 +1,4 @@
-# onboard.js
+# onboard.js is now [ngOnboard]() (Discontinued & rewritten specifically for AngularJS)
 
 onboard.js is a jQuery plugin that creates an elegant on-screen overlay for onboarding and product tours.
 
